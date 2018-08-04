@@ -1,6 +1,12 @@
 # InstrumentAnalysis
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.1.2.
+The objective of this project is to develop a site using the following technologies:
+- Angular
+- TypeScript
+- Bootstrap
+- Amazon S3 and Lambdas
+- IndexedDB
 
 ## Development server
 
