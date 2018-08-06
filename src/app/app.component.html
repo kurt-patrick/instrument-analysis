@@ -1,18 +1,27 @@
 <!--The content below is only a placeholder and can be replaced.-->
+<br />
+
+In app-root component!
 <div>
-    In app-root component {{ title }}!
-</div>
-<div>
-  <h2>Here are some links to help you start: </h2>
   <ul>
-    <li>
-      <h2><a target="_blank" rel="noopener" href="https://angular.io/tutorial">Tour of Heroes</a></h2>
-    </li>
-    <li>
-      <h2><a target="_blank" rel="noopener" href="https://github.com/angular/angular-cli/wiki">CLI Documentation</a></h2>
-    </li>
-    <li>
-      <h2><a target="_blank" rel="noopener" href="https://blog.angular.io/">Angular blog</a></h2>
-    </li>
+      <li *ngFor="let instrumentName of instrumentNames" 
+      [class.selected]="instrumentName === selectedInstrument"
+      (click)="onSelectInstrument(instrumentName)">
+  </ul>
+</div>
+<div *ngIf="selectedInstrument">
+    <label>name:
+      <input [(ngModel)]="selectedInstrument" placeholder="name">
+    </label>
+  </div>
+<div>
+  <h2>Statistics</h2>
+  <ul>
+    <li><a target="#" rel="noopener" href="#">Daily range</a></li>
+    <li><a target="#" rel="noopener" href="#">Open closes higher</a></li>
+    <li><a target="#" rel="noopener" href="#">2 consecutive higher closes</a></li>
+    <li><a target="#" rel="noopener" href="#">3 consecutive higher closes</a></li>
+    <li><a target="#" rel="noopener" href="#">n consecutive higher closes</a></li>
+    <li><a target="#" rel="noopener" href="#">Buy open sell close</a></li>
   </ul>
 </div>
