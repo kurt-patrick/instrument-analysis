@@ -1,15 +1,9 @@
-<p>
-Import an instruments bar data
-</p>
+<p>Import an instruments bar data</p>
 
 <input type="file" id="files" name="file" (change)="handleFileSelect(input)" #input />
 <div id="progress_bar">
-  <div class="percent">0%</div>
+  <div class="percent"></div>
 </div>
-
-<script>
-  var reader;
-  var progress = document.querySelector('.percent');
-
-  // document.getElementById('files').addEventListener('change', handleFileSelect, false);
-</script>
+<div *ngIf="priceBars && priceBars.length > 0" >
+  <p>Imported price bars: {{priceBars.length}}</p>
+</div>

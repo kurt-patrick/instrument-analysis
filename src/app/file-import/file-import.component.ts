@@ -25,7 +25,7 @@ export class FileImportComponent implements OnInit {
 
     // Reset progress indicator on new file selection.
     // progress.style.width = '0%';
-    this.progress.textContent = '0%';
+    // this.progress.textContent = '0%';
 
     const reader = new FileReader();
     reader.onerror = this.errorHandler;
@@ -33,7 +33,7 @@ export class FileImportComponent implements OnInit {
       alert('File read cancelled');
     };
     reader.onloadstart = (e) => {
-      document.getElementById('progress_bar').className = 'loading';
+      // document.getElementById('progress_bar').className = 'loading';
     };
     reader.onload = function(e) {
       // Ensure that the progress bar displays 100% at the end.
