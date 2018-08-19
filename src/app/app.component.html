@@ -1,9 +1,8 @@
-<!--The content below is only a placeholder and can be replaced.-->
 <br />
 
 <div>
   <select id="instrumentSelect">
-      <option *ngFor="let instrumentName of instrumentNames" 
+      <option *ngFor="let instrumentName of instrumentNames"
         (click)="onSelectInstrument(instrumentName)">{{instrumentName}}</option>
   </select>
 </div>
