@@ -7,12 +7,11 @@ import { MockInstrumentNames } from './mock-instruments';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  
   instrumentNames = MockInstrumentNames;
   selectedInstrument: string;
-  
+
   constructor() {}
-  
+
   ngOnInit(): void {
   }
 

@@ -1,19 +1,17 @@
 <!--The content below is only a placeholder and can be replaced.-->
 <br />
 
-In app-root component!
 <div>
-  <ul>
-      <li *ngFor="let instrumentName of instrumentNames" 
-      [class.selected]="instrumentName === selectedInstrument"
-      (click)="onSelectInstrument(instrumentName)">
-  </ul>
+  <select id="instrumentSelect">
+      <option *ngFor="let instrumentName of instrumentNames" 
+        (click)="onSelectInstrument(instrumentName)">{{instrumentName}}</option>
+  </select>
 </div>
-<div *ngIf="selectedInstrument">
-    <label>name:
-      <input [(ngModel)]="selectedInstrument" placeholder="name">
-    </label>
-  </div>
+
+<div *ngIf="selectedInstrument && !selectedInstrument.startsWith('Select')">
+  <br/><label>Selected: {{selectedInstrument}}</label>
+</div>
+
 <div>
   <h2>Statistics</h2>
   <ul>

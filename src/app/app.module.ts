@@ -3,11 +3,13 @@ import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
 import { TopToolbarComponent } from './top-toolbar/top-toolbar.component';
+import { FileImportComponent } from './file-import/file-import.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    TopToolbarComponent
+    TopToolbarComponent,
+    FileImportComponent
   ],
   imports: [
     BrowserModule
@@ -15,7 +17,8 @@ import { TopToolbarComponent } from './top-toolbar/top-toolbar.component';
   providers: [],
   bootstrap: [
     AppComponent,
-    TopToolbarComponent
+    TopToolbarComponent,
+    FileImportComponent
   ]
 })
 export class AppModule { }
