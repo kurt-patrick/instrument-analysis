@@ -1,9 +1,53 @@
-<p>Import an instruments bar data</p>
+<div class="containder-fluid">
 
-<input type="file" id="files" name="file" (change)="handleFileSelect(input)" #input />
-<div id="progress_bar">
-  <div class="percent"></div>
-</div>
-<div *ngIf="priceBars && priceBars.length > 0" >
-  <p>Imported price bars: {{priceBars.length}}</p>
+  <div class="row">
+    <div class="col-12">
+      <h4>Import instrument data</h4>
+      <br/>
+      <input type="file" id="files" name="file" (change)="handleFileSelect(input)" #input />
+      <br/>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12">
+      <div id="progress_bar">
+        <div class="percent"></div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="priceBars && priceBars.length > 0" class="row">
+    <div class="col-12">
+      <p>Imported price bars: {{priceBars.length}}</p>
+    </div>
+  </div>
+
+  <div *ngIf="priceBars && priceBars.length > 0" class="row">
+    <div class="col-6">
+      <table class="table table-sm">
+        <thead>
+          <tr>
+            <th scope="col">Date</th>
+            <th scope="col">Open</th>
+            <th scope="col">High</th>
+            <th scope="col">Low</th>
+            <th scope="col">Close</th>
+            <th scope="col">Volume</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let priceBar of priceBars | slice:0:10 ">
+            <td>{{priceBar.date}}</td>
+            <td>{{priceBar.openPrice | number: '0.4-4'}}</td>
+            <td>{{priceBar.highPrice | number: '0.4-4'}}</td>
+            <td>{{priceBar.lowPrice | number: '0.4-4'}}</td>
+            <td>{{priceBar.closePrice | number: '0.4-4'}}</td>
+            <td>{{priceBar.volume | number: '1.'}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
 </div>

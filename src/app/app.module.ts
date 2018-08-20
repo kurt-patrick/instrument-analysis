@@ -1,6 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { LoadingModule } from 'ngx-loading';
 
 import { AppComponent } from './app.component';
 import { TopToolbarComponent } from './top-toolbar/top-toolbar.component';
@@ -25,7 +26,8 @@ const appRoutes: Routes = [
       appRoutes,
       { enableTracing: true }
     ),
-    BrowserModule
+    BrowserModule,
+    LoadingModule
   ],
   providers: [],
   bootstrap: [

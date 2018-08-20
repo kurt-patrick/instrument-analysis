@@ -1,14 +1,3 @@
-<!--
-<br />
-
-<div>
-  <select id="instrumentSelect">
-      <option *ngFor="let instrumentName of instrumentNames"
-        (click)="onSelectInstrument(instrumentName)">{{instrumentName}}</option>
-  </select>
-</div>
-
-<div *ngIf="selectedInstrument && !selectedInstrument.startsWith('Select')">
-  <br/><label>Selected: {{selectedInstrument}}</label>
-</div>
--->
+<app-top-tool-bar></app-top-tool-bar>
+<router-outlet></router-outlet>
+<ngx-loading></ngx-loading>
