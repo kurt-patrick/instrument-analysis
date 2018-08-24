@@ -9,10 +9,12 @@ import { FileImportComponent } from './file-import/file-import.component';
 
 const appRoutes: Routes = [
   { path: 'data/import', component: FileImportComponent },
+  { path: 'import', component: FileImportComponent },
   { path: '',
     redirectTo: '/',
     pathMatch: 'full'
-  }
+  },
+  { path: '**', redirectTo: '/' }
 ];
 
 @NgModule({
