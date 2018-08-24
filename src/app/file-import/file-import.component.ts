@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { DataService } from '../shared/data.service';
 import { PriceBar } from '../price-bar';
 
 @Component({
@@ -8,13 +9,20 @@ import { PriceBar } from '../price-bar';
 })
 export class FileImportComponent implements OnInit {
 
+  message: string;
   private progress: HTMLDivElement;
   priceBars: PriceBar[];
 
-  constructor() { }
+  constructor(private data: DataService) { }
 
   ngOnInit() {
+    this.data.currentMessage.subscribe(message => this.message = message);
     this.progress = document.querySelector('.percent');
+  }
+
+  newMessage() {
+    // this.currentInstrument = 'import';
+    this.data.changeMessage('import');
   }
 
   handleFileSelect(evt): void {

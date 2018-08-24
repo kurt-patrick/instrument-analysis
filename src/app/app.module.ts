@@ -1,11 +1,12 @@
+import { DataService } from './shared/data.service';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LoadingModule } from 'ngx-loading';
 
 import { AppComponent } from './app.component';
-import { TopToolbarComponent } from './top-toolbar/top-toolbar.component';
 import { FileImportComponent } from './file-import/file-import.component';
+import { TopToolbarComponent } from './top-toolbar/top-toolbar.component';
 
 const appRoutes: Routes = [
   { path: 'data/import', component: FileImportComponent },
@@ -31,7 +32,7 @@ const appRoutes: Routes = [
     BrowserModule,
     LoadingModule
   ],
-  providers: [],
+  providers: [ DataService ],
   bootstrap: [
     AppComponent,
     TopToolbarComponent,

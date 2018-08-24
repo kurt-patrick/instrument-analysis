@@ -6,6 +6,9 @@
       <br/>
       <input type="file" id="files" name="file" (change)="handleFileSelect(input)" #input />
       <br/>
+      <p *ngIf="message">Instrument: {{message}}</p>
+      <button (click)="newMessage()">Set</button>
+      <br/>
     </div>
   </div>
 
