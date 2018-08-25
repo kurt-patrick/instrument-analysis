@@ -9,20 +9,15 @@ import { PriceBar } from '../price-bar';
 })
 export class FileImportComponent implements OnInit {
 
-  message: string;
+  instrumentCode: string;
   private progress: HTMLDivElement;
   priceBars: PriceBar[];
 
   constructor(private data: DataService) { }
 
   ngOnInit() {
-    this.data.currentMessage.subscribe(message => this.message = message);
+    this.data.currentMessage.subscribe(message => this.instrumentCode = message);
     this.progress = document.querySelector('.percent');
-  }
-
-  newMessage() {
-    // this.currentInstrument = 'import';
-    this.data.changeMessage('import');
   }
 
   handleFileSelect(evt): void {
@@ -72,6 +67,11 @@ export class FileImportComponent implements OnInit {
         if (priceBar.populateFromCsvRow(arr[arrIndex])) {
           this.priceBars.push(priceBar);
         }
+      }
+
+      if (this.priceBars && this.priceBars.length > 0) {
+        this.instrumentCode = this.priceBars[0].code;
+        this.data.changeMessage(this.instrumentCode);
       }
 
       console.log('this.priceBars.length: ' + this.priceBars.length);

@@ -6,9 +6,7 @@
       <br/>
       <input type="file" id="files" name="file" (change)="handleFileSelect(input)" #input />
       <br/>
-      <p *ngIf="message">Instrument: {{message}}</p>
-      <button (click)="newMessage()">Set</button>
-      <br/>
+      <p></p>
     </div>
   </div>
 
@@ -22,6 +20,7 @@
 
   <div *ngIf="priceBars && priceBars.length > 0" class="row">
     <div class="col-12">
+      <p>Imported Instrument: {{instrumentCode}}</p>
       <p>Imported price bars: {{priceBars.length}}</p>
     </div>
   </div>
