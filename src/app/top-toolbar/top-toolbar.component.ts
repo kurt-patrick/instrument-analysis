@@ -8,19 +8,18 @@ import { DataService } from '../shared/data.service';
 })
 export class TopToolbarComponent implements OnInit {
 
-  message: string;
+  instrumentCode: string;
 
   constructor(private data: DataService) { }
 
   ngOnInit() {
-    this.data.currentMessage.subscribe(message => {
-      console.log('toolbar.subscribe: ' + message);
-      this.message = message;
+    this.data.instrumentCode.subscribe(code => {
+      this.instrumentCode = code;
     });
   }
 
   newMessage() {
-    this.data.changeMessage('toolbar');
+    this.data.changeInstrument('toolbar');
   }
 
 }

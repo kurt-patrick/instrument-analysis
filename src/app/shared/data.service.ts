@@ -1,19 +1,25 @@
-import { Injectable, Output } from '@angular/core';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
+import { Injectable, Output } from '@angular/core';
+import { PriceBar } from './../price-bar';
 
 
 @Injectable({ providedIn: 'root' })
 export class DataService {
 
-  messageSource = new BehaviorSubject<string>('');
+  instrumentCodeService = new BehaviorSubject<string>('');
+  instrumentPriceDataService = new BehaviorSubject<PriceBar[]>(null);
 
-  currentMessage = this.messageSource.asObservable();
+  instrumentCode = this.instrumentCodeService.asObservable();
+  instrumentPriceData = this.instrumentPriceDataService.asObservable();
 
   constructor() {}
 
-  changeMessage(message: string) {
-    console.log('DataService.changeMessage: ' + message);
-    this.messageSource.next(message);
+  changeInstrument(message: string) {
+    this.instrumentCodeService.next(message);
+  }
+
+  changeInstrumentPriceData(message: PriceBar[]) {
+    this.instrumentPriceDataService.next(message);
   }
 
 }

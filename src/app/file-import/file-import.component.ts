@@ -16,7 +16,7 @@ export class FileImportComponent implements OnInit {
   constructor(private data: DataService) { }
 
   ngOnInit() {
-    this.data.currentMessage.subscribe(message => this.instrumentCode = message);
+    this.data.instrumentCode.subscribe(code => this.instrumentCode = code);
     this.progress = document.querySelector('.percent');
   }
 
@@ -71,7 +71,8 @@ export class FileImportComponent implements OnInit {
 
       if (this.priceBars && this.priceBars.length > 0) {
         this.instrumentCode = this.priceBars[0].code;
-        this.data.changeMessage(this.instrumentCode);
+        this.data.changeInstrument(this.instrumentCode);
+        this.data.changeInstrumentPriceData(this.priceBars);
       }
 
       console.log('this.priceBars.length: ' + this.priceBars.length);
