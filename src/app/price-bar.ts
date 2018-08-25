@@ -9,6 +9,7 @@ export class PriceBar implements IPriceBar {
   lowPrice: number;
   closePrice: number;
   volume: number;
+  dailyRange: number;
 
 
   constructor() {}
@@ -27,6 +28,7 @@ export class PriceBar implements IPriceBar {
     this.lowPrice = Number(arr[4]);
     this.closePrice = Number(arr[5]);
     this.volume = Number(arr[6]);
+    this.dailyRange = this.highPrice - this.lowPrice;
     this.loaded = true;
 
     // success, we have a price bar

@@ -1,26 +1,36 @@
-<p>daily-range works!</p>
-<p *ngIf='instrumentCode'>Instrument is {{instrumentCode}}</p>
-<div *ngIf="priceBars && priceBars.length > 0" class="row">
-  <div class="col-6">
+<p>Instrument: {{instrumentCode}}</p>
+<p>priceBars.length: {{barCount()}}</p>
+<p>period: {{period}}</p>
+<div *ngIf="barCount() == 0" class="row">
+  <p>No price data found!</p>
+</div>
+<div *ngIf="barCount() > 0 && barCount() < period" class="row">
+  <p>Note: Instrument does not have {{period}} price bars. {{barCount()}} will be used instead</p>
+</div>
+<div *ngIf="barCount() > 0" class="row">
+  <div class="col-2">
     <table class="table table-sm">
       <thead>
         <tr>
-          <th scope="col">Date</th>
-          <th scope="col">Open</th>
-          <th scope="col">High</th>
-          <th scope="col">Low</th>
-          <th scope="col">Close</th>
-          <th scope="col">Volume</th>
+          <th colspan=2 scope="col">Daily Range</th>
+        </tr>
+        <tr>
+          <th scope="col">{{period}} bars</th>
+          <th scope="col">Value</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let priceBar of priceBars | slice:0:10 ">
-          <td>{{priceBar.date}}</td>
-          <td>{{priceBar.openPrice | number: '0.4-4'}}</td>
-          <td>{{priceBar.highPrice | number: '0.4-4'}}</td>
-          <td>{{priceBar.lowPrice | number: '0.4-4'}}</td>
-          <td>{{priceBar.closePrice | number: '0.4-4'}}</td>
-          <td>{{priceBar.volume | number: '1.'}}</td>
+        <tr>
+          <td>Min Range</td>
+          <td>{{minPriceRange() | number: '0.4-4'}}</td>
+        </tr>
+        <tr>
+          <td>Max Range</td>
+          <td>{{maxPriceRange() | number: '0.4-4'}}</td>
+        </tr>
+        <tr>
+          <td>Median Range</td>
+          <td>{{medianPriceRange() | number: '0.4-4'}}</td>
         </tr>
       </tbody>
     </table>
