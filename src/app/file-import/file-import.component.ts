@@ -72,7 +72,7 @@ export class FileImportComponent implements OnInit {
       if (this.priceBars && this.priceBars.length > 0) {
         this.instrumentCode = this.priceBars[0].code;
         this.data.changeInstrument(this.instrumentCode);
-        this.data.changeInstrumentPriceData(this.priceBars);
+        this.data.priceBars = this.priceBars;
       }
 
       console.log('this.priceBars.length: ' + this.priceBars.length);

@@ -1,0 +1,24 @@
+<p>Instrument: {{instrumentCode}}</p>
+<p>priceBars.length: {{barCount()}}</p>
+<div *ngIf="barCount() == 0" class="row">
+  <p>No price data found!</p>
+</div>
+<div *ngIf="barCount() > 0" class="row">
+  <div class="row">
+    <div class="col-2">
+      <app-daily-range period='20'></app-daily-range>
+    </div>
+    <div class="col-2">
+        <app-daily-range period='60'></app-daily-range>
+    </div>
+    <div class="col-2">
+        <app-daily-range period='240'></app-daily-range>
+    </div>
+    <div class="col-2">
+        <app-daily-range period='720'></app-daily-range>
+    </div>
+  </div>
+  <div class="row">
+    <p>Pagination of price data here with daily range</p>
+  </div>
+</div>

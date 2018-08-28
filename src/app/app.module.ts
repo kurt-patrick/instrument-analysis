@@ -6,13 +6,15 @@ import { LoadingModule } from 'ngx-loading';
 
 import { AppComponent } from './app.component';
 import { DailyRangeComponent } from './stats/daily-range/daily-range.component';
+import { DailyRangeContainerComponent } from './stats/daily-range-container/daily-range-container.component';
 import { FileImportComponent } from './file-import/file-import.component';
 import { TopToolbarComponent } from './top-toolbar/top-toolbar.component';
+import { BarDataPaginatedComponent } from './bar-data-paginated/bar-data-paginated.component';
 
 const appRoutes: Routes = [
   { path: 'data/import', component: FileImportComponent },
   { path: 'import', component: FileImportComponent },
-  { path: 'daily-range', component: DailyRangeComponent },
+  { path: 'daily-range', component: DailyRangeContainerComponent },
   { path: '',
     redirectTo: '/',
     pathMatch: 'full'
@@ -25,7 +27,9 @@ const appRoutes: Routes = [
     AppComponent,
     TopToolbarComponent,
     FileImportComponent,
-    DailyRangeComponent
+    DailyRangeComponent,
+    DailyRangeContainerComponent,
+    BarDataPaginatedComponent
   ],
   imports: [
     RouterModule.forRoot(

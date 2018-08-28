@@ -1,18 +1,12 @@
-<p>Instrument: {{instrumentCode}}</p>
-<p>priceBars.length: {{barCount()}}</p>
-<p>period: {{period}}</p>
-<div *ngIf="barCount() == 0" class="row">
-  <p>No price data found!</p>
-</div>
-<div *ngIf="barCount() > 0 && barCount() < period" class="row">
-  <p>Note: Instrument does not have {{period}} price bars. {{barCount()}} will be used instead</p>
-</div>
 <div *ngIf="barCount() > 0" class="row">
-  <div class="col-2">
+  <div *ngIf="barCount() < period" class="row">
+    <p>Note: Instrument does not have {{period}} price bars. {{barCount()}} will be used instead</p>
+  </div>
+  <div class="col-12">
     <table class="table table-sm">
       <thead>
         <tr>
-          <th colspan=2 scope="col">Daily Range</th>
+          <th colspan=12 scope="col">Daily Range</th>
         </tr>
         <tr>
           <th scope="col">{{period}} bars</th>
@@ -31,6 +25,14 @@
         <tr>
           <td>Median Range</td>
           <td>{{medianPriceRange() | number: '0.4-4'}}</td>
+        </tr>
+        <tr>
+          <td>Average Range</td>
+          <td>{{avgPriceRange() | number: '0.4-4'}}</td>
+        </tr>
+        <tr>
+          <td>80% Percentile</td>
+          <td>TODO</td>
         </tr>
       </tbody>
     </table>
