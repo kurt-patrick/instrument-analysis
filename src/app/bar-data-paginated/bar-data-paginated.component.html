@@ -1,3 +1,30 @@
-<p>
-  bar-data-paginated works!
-</p>
+<div *ngIf="barCount() > 0">
+  <div class="row">
+    <div class="col-12">
+      <table class="table table-sm">
+        <thead>
+          <tr>
+            <th scope="col">Date</th>
+            <th scope="col">Open</th>
+            <th scope="col">High</th>
+            <th scope="col">Low</th>
+            <th scope="col">Close</th>
+            <th scope="col">Volume</th>
+            <th scope="col">Range</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let priceBar of priceBars | slice:0:20">
+            <td>{{priceBar.date}}</td>
+            <td>{{priceBar.openPrice | number: '0.4-4'}}</td>
+            <td>{{priceBar.highPrice | number: '0.4-4'}}</td>
+            <td>{{priceBar.lowPrice | number: '0.4-4'}}</td>
+            <td>{{priceBar.closePrice | number: '0.4-4'}}</td>
+            <td>{{priceBar.volume | number: '1.'}}</td>
+            <td>{{priceBar.dailyRange | number: '0.4-4'}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

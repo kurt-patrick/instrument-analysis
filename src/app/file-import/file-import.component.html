@@ -25,31 +25,4 @@
     </div>
   </div>
 
-  <div *ngIf="priceBars && priceBars.length > 0" class="row">
-    <div class="col-6">
-      <table class="table table-sm">
-        <thead>
-          <tr>
-            <th scope="col">Date</th>
-            <th scope="col">Open</th>
-            <th scope="col">High</th>
-            <th scope="col">Low</th>
-            <th scope="col">Close</th>
-            <th scope="col">Volume</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let priceBar of priceBars | slice:0:10 ">
-            <td>{{priceBar.date}}</td>
-            <td>{{priceBar.openPrice | number: '0.4-4'}}</td>
-            <td>{{priceBar.highPrice | number: '0.4-4'}}</td>
-            <td>{{priceBar.lowPrice | number: '0.4-4'}}</td>
-            <td>{{priceBar.closePrice | number: '0.4-4'}}</td>
-            <td>{{priceBar.volume | number: '1.'}}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
 </div>
