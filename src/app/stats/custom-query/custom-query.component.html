@@ -1,0 +1,30 @@
+<div class="border-none">
+  <div class="col-12">
+    <p class="font-weight-bold">Todays low is less than equals yesterdays low</p>
+  </div>
+</div>
+<div class="input-group mb-3">
+  <div class="input-group-prepend">
+    <span class="input-group-text">Query:</span>
+  </div>
+  <input id="query" type="text" class="form-control" aria-label="Custom query to calculate statistics">
+  <div class="input-group-append">
+    <button id="calculate" (click)="calculate()" class="input-group-button">Calculate</button>
+  </div>
+</div>
+<div class="border-bottom">
+  <div class="row">
+    <div class="col-3 text-left">
+      <label>Trades: {{tradeCount | number: '1.'}}</label>
+    </div>
+    <div class="col-3 text-left">
+      <label>True: {{tradeCount | number: '0.2-2'}}%</label>
+    </div>
+    <div class="col-3 text-left">
+      <label>False: {{tradeCount | number: '0.2-2'}}%</label>
+    </div>
+    <div class="col-3 text-left">
+      <label>Pie chart</label>
+    </div>
+  </div>
+</div>
