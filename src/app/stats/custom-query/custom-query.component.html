@@ -1,15 +1,15 @@
 <div class="border-none">
   <div class="col-12">
-    <p class="font-weight-bold">Todays low is less than equals yesterdays low</p>
+    <p class="font-weight-bold">Todays low is less than or equal to yesterdays low</p>
   </div>
 </div>
 <div class="input-group mb-3">
   <div class="input-group-prepend">
     <span class="input-group-text">Query:</span>
   </div>
-  <input id="query" type="text" class="form-control" aria-label="Custom query to calculate statistics">
+  <input id="query" value="{{query}}" #textbox required class="form-control" aria-label="Custom query to calculate statistics" (keyup)="onKeyPress($event.target.value)">
   <div class="input-group-append">
-    <button id="calculate" (click)="calculate()" class="input-group-button">Calculate</button>
+    <button id="calculate" (click)="calculate()" class="input-group-button" [disabled]="query.trim().length == 0">Calculate</button>
   </div>
 </div>
 <div class="border-bottom">
@@ -28,3 +28,6 @@
     </div>
   </div>
 </div>
+<p>debugging: {{debugging}}</p>
+<p>failedToParseMessage: {{failedToParseMessage}}</p>
+<p>query: {{query}}</p>
