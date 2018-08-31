@@ -9,7 +9,7 @@
   </div>
   <input id="query" value="{{query}}" #textbox required class="form-control" aria-label="Custom query to calculate statistics" (keyup)="onKeyPress($event.target.value)">
   <div class="input-group-append">
-    <button id="calculate" (click)="calculate()" class="input-group-button" [disabled]="query.trim().length == 0">Calculate</button>
+    <button id="calculate" (click)="calculate()" class="input-group-button" [disabled]="query.trim().length <= 12">Calculate</button>
   </div>
 </div>
 <div class="border-bottom">
@@ -18,10 +18,10 @@
       <label>Trades: {{tradeCount | number: '1.'}}</label>
     </div>
     <div class="col-3 text-left">
-      <label>True: {{tradeCount | number: '0.2-2'}}%</label>
+      <label>True: {{trueCount | number: '0.2-2'}}%</label>
     </div>
     <div class="col-3 text-left">
-      <label>False: {{tradeCount | number: '0.2-2'}}%</label>
+      <label>False: {{falseCount | number: '0.2-2'}}%</label>
     </div>
     <div class="col-3 text-left">
       <label>Pie chart</label>

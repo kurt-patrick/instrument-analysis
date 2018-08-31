@@ -1,3 +1,5 @@
+import { PriceBar } from './../../price-bar';
+import { DataService } from './../../shared/data.service';
 import { Component, OnInit, Input, Query } from '@angular/core';
 import { isNumber } from 'util';
 
@@ -17,37 +19,124 @@ export class CustomQueryComponent implements OnInit {
   failedToParseQuery: boolean;
   failedToParseMessage: string;
 
-  constructor() { }
+  constructor(private data: DataService) { }
 
   ngOnInit() {
     this.calculate();
+    this.query = 'low[0] <= low[-1]';
   }
 
   onKeyPress(value: string) {
     this.failedToParseQuery = false;
     this.query = value.trim();
-    this.parseQuery();
+    // this.parseQuery();
   }
 
   calculate(): void {
     this.tradeCount = 0;
     this.trueCount = 0;
     this.falseCount = 0;
-    this.query = 'low[0] <= low[-1]';
     this.failedToParseQuery = this.parseQuery();
-    this.debugging += 'failedToParseQuery: ' + this.failedToParseQuery;
+    if (this.failedToParseQuery === true) {
+      this.debugging += 'failedToParseQuery: ' + this.failedToParseQuery;
+    } else {
+      // calculate the formula
+      this.performCalculation();
+    }
+  }
+
+  private performCalculation(): void {
+
   }
 
   private parseQuery(): boolean {
 
+    this.trueCount = 0;
+    this.falseCount = 0;
+    this.tradeCount = 0;
     this.failedToParseMessage = '';
     this.failedToParseQuery = false;
+
+    const equalityIndicators: string[] = [ '<', '<=', '>=', '>' ];
+
+    if (!this.data || !this.data.priceBars || this.data.priceBars.length === 0) {
+      this.failedToParseMessage = 'price data is required. bars';
+      return false;
+    }
+
+    if (!this.query || this.query.trim().length <= 12) {
+      this.failedToParseMessage = 'query must be greater than 12 characters';
+      return false;
+    }
+
+    let index: number;
+    let equalityIndex = -1;
+    let equalityIndicator: string;
+
+    for (index = 0; index < equalityIndicators.length; index++) {
+      equalityIndicator = equalityIndicators[index];
+      equalityIndex = this.query.indexOf(equalityIndicator);
+      if (equalityIndex >= 0) {
+        break;
+      }
+    }
+
+    if (equalityIndex <= -1) {
+      this.failedToParseMessage = 'equality indicator not found: <, <=, >=, >';
+      return false;
+    }
 
     const lhs: PriceSourceAndIndex = PriceSourceAndIndex.parse(this.query.split(' ')[0]);
     const rhs: PriceSourceAndIndex = PriceSourceAndIndex.parse(this.query.split(' ')[2]);
 
-    // todo: validate equality indicator <, <=, >, >=
+    let priceBarLhs: PriceBar;
+    let priceBarRhs: PriceBar;
+    let lhsProperty: string;
+    let rhsProperty: string;
 
+    const priceBars = this.data.priceBars;
+    for (index = 0; index < priceBars.length + (rhs.index < 0 ? rhs.index : 0); index++) {
+      priceBarLhs = priceBars[index + lhs.index];
+      priceBarRhs = priceBars[index + Math.abs(rhs.index)];
+
+      lhsProperty = lhs.source + 'Price';
+      rhsProperty = rhs.source + 'Price';
+      switch (equalityIndicator) {
+        case '<':
+          if (priceBarLhs[lhsProperty] < priceBarRhs[rhsProperty]) {
+            this.trueCount += 1;
+          }
+          break;
+        case '<=':
+          if (priceBarLhs[lhsProperty] <= priceBarRhs[rhsProperty]) {
+            this.trueCount += 1;
+          }
+          break;
+        case '>':
+          if (priceBarLhs[lhsProperty] > priceBarRhs[rhsProperty]) {
+            this.trueCount += 1;
+          }
+          break;
+        case '>=':
+          if (priceBarLhs[lhsProperty] >= priceBarRhs[rhsProperty]) {
+            this.trueCount += 1;
+          }
+          break;
+      }
+
+      this.tradeCount += 1;
+
+    }
+
+    if (this.tradeCount > 0) {
+      this.falseCount = this.tradeCount - this.trueCount;
+      if (this.trueCount > 0) {
+        this.trueCount = (this.trueCount / this.tradeCount) * 100;
+      }
+      if (this.falseCount > 0) {
+        this.falseCount = (this.falseCount / this.tradeCount) * 100;
+      }
+    }
 
     this.debugging =
       'lhs.source: ' + lhs.source +

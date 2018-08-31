@@ -28,6 +28,7 @@
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
           <a class="dropdown-item" routerLink="daily-range">Daily range</a>
+          <a class="dropdown-item" routerLink="query">basic query</a>
         <!--
           <a class="dropdown-item" href="#">Yesterdays high or low will be touched</a>
           <a class="dropdown-item" href="#">Gap lower</a>
@@ -44,7 +45,7 @@
 
     </ul>
 
-    <p *ngIf="message">Instrument: {{message}}</p>
+    <p *ngIf="instrumentCode">Instrument: {{instrumentCode}}</p>
     <button (click)="newMessage()">Send message</button>
 
     <!--
