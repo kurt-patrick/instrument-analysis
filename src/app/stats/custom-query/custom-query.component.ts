@@ -18,6 +18,7 @@ export class CustomQueryComponent implements OnInit {
   query: string;
   failedToParseQuery: boolean;
   failedToParseMessage: string;
+  private queryPortions: QueryPortion[] = [];
 
   constructor(private data: DataService) { }
 
@@ -33,9 +34,6 @@ export class CustomQueryComponent implements OnInit {
   }
 
   calculate(): void {
-    this.tradeCount = 0;
-    this.trueCount = 0;
-    this.falseCount = 0;
     this.failedToParseQuery = this.parseQuery();
     if (this.failedToParseQuery === true) {
       this.debugging += 'failedToParseQuery: ' + this.failedToParseQuery;
@@ -56,11 +54,12 @@ export class CustomQueryComponent implements OnInit {
     this.tradeCount = 0;
     this.failedToParseMessage = '';
     this.failedToParseQuery = false;
+    this.queryPortions = [];
 
-    const equalityIndicators: string[] = [ '<', '<=', '>=', '>' ];
+    // const equalityIndicators: string[] = [ '<', '<=', '>=', '>' ];
 
     if (!this.data || !this.data.priceBars || this.data.priceBars.length === 0) {
-      this.failedToParseMessage = 'price data is required. bars';
+      this.failedToParseMessage = 'price data is required';
       return false;
     }
 
@@ -70,38 +69,32 @@ export class CustomQueryComponent implements OnInit {
     }
 
     let index: number;
-    let equalityIndex = -1;
-    let equalityIndicator: string;
 
-    for (index = 0; index < equalityIndicators.length; index++) {
-      equalityIndicator = equalityIndicators[index];
-      equalityIndex = this.query.indexOf(equalityIndicator);
-      if (equalityIndex >= 0) {
-        break;
-      }
-    }
-
+    /*
     if (equalityIndex <= -1) {
       this.failedToParseMessage = 'equality indicator not found: <, <=, >=, >';
       return false;
     }
+    */
 
-    const lhs: PriceSourceAndIndex = PriceSourceAndIndex.parse(this.query.split(' ')[0]);
-    const rhs: PriceSourceAndIndex = PriceSourceAndIndex.parse(this.query.split(' ')[2]);
+    const portions = this.query.split('and');
+    portions.forEach(portion => this.queryPortions.push( QueryPortion.parse(this.query) ));
 
     let priceBarLhs: PriceBar;
     let priceBarRhs: PriceBar;
     let lhsProperty: string;
     let rhsProperty: string;
 
-    const priceBars = this.data.priceBars;
-    for (index = 0; index < priceBars.length + (rhs.index < 0 ? rhs.index : 0); index++) {
-      priceBarLhs = priceBars[index + lhs.index];
-      priceBarRhs = priceBars[index + Math.abs(rhs.index)];
+    const queryPortion = this.queryPortions[0];
 
-      lhsProperty = lhs.source + 'Price';
-      rhsProperty = rhs.source + 'Price';
-      switch (equalityIndicator) {
+    const priceBars = this.data.priceBars;
+    for (index = 0; index < priceBars.length + (queryPortion.rhs.index < 0 ? queryPortion.rhs.index : 0); index++) {
+      priceBarLhs = priceBars[index + queryPortion.lhs.index];
+      priceBarRhs = priceBars[index + Math.abs(queryPortion.rhs.index)];
+
+      lhsProperty = queryPortion.lhs.source + 'Price';
+      rhsProperty = queryPortion.rhs.source + 'Price';
+      switch (queryPortion.equalityIndicator) {
         case '<':
           if (priceBarLhs[lhsProperty] < priceBarRhs[rhsProperty]) {
             this.trueCount += 1;
@@ -139,12 +132,12 @@ export class CustomQueryComponent implements OnInit {
     }
 
     this.debugging =
-      'lhs.source: ' + lhs.source +
-      ', lhs.index: ' + lhs.index +
-      ', lhs.result: ' + lhs.result.success +
-      ', rhs.result: ' + rhs.result.success +
-      ', rhs.source: ' + rhs.source +
-      ', rhs.index: ' + rhs.index;
+      'lhs.source: ' + queryPortion.lhs.source +
+      ', lhs.index: ' + queryPortion.lhs.index +
+      ', lhs.result: ' + queryPortion.lhs.result.success +
+      ', rhs.result: ' + queryPortion.rhs.result.success +
+      ', rhs.source: ' + queryPortion.rhs.source +
+      ', rhs.index: ' + queryPortion.rhs.index;
 
     return true;
   }
@@ -155,7 +148,74 @@ export class CustomQueryComponent implements OnInit {
 
 }
 
-export class PriceSourceAndIndex {
+/*
+ * A query portion refers to a comparsion piece of a query once it is broken down.
+ * For example, if we have the query: low[0] < low[-1] and close[0] > open[0]
+ * There will be 2 query portions:
+ * [1]: low[0] < low[-1]
+ * [2]: close[0] > open[0]
+ */
+export class QueryPortion {
+  private equalityIndicators: string[] = [ '<', '<=', '>=', '>' ];
+
+  equalityIndicator: string;
+  lhs: PriceColumnAndIndex;
+  rhs: PriceColumnAndIndex;
+  queryPortion: string;
+  result: QueryResult;
+
+  constructor(portion: string) {
+    this.queryPortion = portion;
+
+    if (!this.queryPortion || this.queryPortion.trim().length <= 12) {
+      this.result = QueryResult.failure('query must be greater than 12 characters');
+      return;
+    }
+
+    this.equalityIndicator = QueryPortion.getEqualityIndicator(portion);
+    if (!this.equalityIndicator || this.equalityIndicator.trim().length === 0) {
+      this.result = QueryResult.failure('equality indicator not found: <, <=, >=, >');
+      return;
+    }
+
+    this.lhs = PriceColumnAndIndex.parse(this.queryPortion.split(' ')[0]);
+    if (!this.lhs.result.success) {
+      this.result = this.lhs.result;
+      return;
+    }
+
+    this.rhs = PriceColumnAndIndex.parse(this.queryPortion.split(' ')[2]);
+    if (!this.rhs.result.success) {
+      this.result = this.rhs.result;
+      return;
+    }
+
+    this.result = QueryResult.success();
+  }
+
+  static getEqualityIndicator(query: string): string {
+    const equalityIndicators: string[] = [ '<', '<=', '>=', '>' ];
+
+    let index: number;
+    let equalityIndicator: string;
+
+    for (index = 0; index < equalityIndicators.length; index++) {
+      equalityIndicator = equalityIndicators[index];
+      if (query.indexOf(equalityIndicator) >= 0) {
+        return equalityIndicator;
+      }
+    }
+
+    return '';
+  }
+
+  static parse(portion: string): QueryPortion {
+    return new QueryPortion(portion);
+  }
+
+}
+
+export class PriceColumnAndIndex {
 
   private validPriceSources: string[] = [ 'low', 'high', 'open', 'close' ];
 
@@ -167,8 +227,8 @@ export class PriceSourceAndIndex {
     this.result = QueryResult.success();
   }
 
-  static parse(value: string): PriceSourceAndIndex {
-    const retVal = new PriceSourceAndIndex();
+  static parse(value: string): PriceColumnAndIndex {
+    const retVal = new PriceColumnAndIndex();
 
     if (!value || value.trim().length <= 3) {
       return retVal.setResult(QueryResult.failure('parse: value: must be at least 4 char long. actual: ' + value));
@@ -202,7 +262,7 @@ export class PriceSourceAndIndex {
     return retVal;
   }
 
-  private setResult(value: QueryResult): PriceSourceAndIndex {
+  private setResult(value: QueryResult): PriceColumnAndIndex {
     this.result = value;
     return this;
   }
