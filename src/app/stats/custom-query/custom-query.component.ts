@@ -2,6 +2,7 @@ import { PriceBar } from './../../price-bar';
 import { DataService } from './../../shared/data.service';
 import { Component, OnInit, Input, Query } from '@angular/core';
 import { isNumber } from 'util';
+import { setDefaultService } from 'selenium-webdriver/edge';
 
 @Component({
   selector: 'app-custom-query',
@@ -11,16 +12,15 @@ import { isNumber } from 'util';
 export class CustomQueryComponent implements OnInit {
 
   debugging: string;
-  tradeCount: number;
-  trueCount: number;
-  falseCount: number;
   @Input()
   query: string;
   failedToParseQuery: boolean;
   failedToParseMessage: string;
-  private queryPortions: QueryPortion[] = [];
+  queryProcessor: QueryProcessor;
 
-  constructor(private data: DataService) { }
+  constructor(private data: DataService) {
+    this.queryProcessor = new QueryProcessor();
+  }
 
   ngOnInit() {
     this.calculate();
@@ -37,26 +37,13 @@ export class CustomQueryComponent implements OnInit {
     this.failedToParseQuery = this.parseQuery();
     if (this.failedToParseQuery === true) {
       this.debugging += 'failedToParseQuery: ' + this.failedToParseQuery;
-    } else {
-      // calculate the formula
-      this.performCalculation();
     }
-  }
-
-  private performCalculation(): void {
-
   }
 
   private parseQuery(): boolean {
 
-    this.trueCount = 0;
-    this.falseCount = 0;
-    this.tradeCount = 0;
     this.failedToParseMessage = '';
     this.failedToParseQuery = false;
-    this.queryPortions = [];
-
-    // const equalityIndicators: string[] = [ '<', '<=', '>=', '>' ];
 
     if (!this.data || !this.data.priceBars || this.data.priceBars.length === 0) {
       this.failedToParseMessage = 'price data is required';
@@ -68,82 +55,131 @@ export class CustomQueryComponent implements OnInit {
       return false;
     }
 
-    let index: number;
-
-    /*
-    if (equalityIndex <= -1) {
+    if (!QueryPortion.getEqualityIndicator(this.query)) {
       this.failedToParseMessage = 'equality indicator not found: <, <=, >=, >';
       return false;
     }
-    */
 
     const portions = this.query.split('and');
-    portions.forEach(portion => this.queryPortions.push( QueryPortion.parse(this.query) ));
+    const queryPortions: QueryPortion[] = [];
 
-    let priceBarLhs: PriceBar;
-    let priceBarRhs: PriceBar;
-    let lhsProperty: string;
-    let rhsProperty: string;
+    portions.forEach(portion => queryPortions.push(QueryPortion.parse(portion.trim())));
 
-    const queryPortion = this.queryPortions[0];
-
-    const priceBars = this.data.priceBars;
-    for (index = 0; index < priceBars.length + (queryPortion.rhs.index < 0 ? queryPortion.rhs.index : 0); index++) {
-      priceBarLhs = priceBars[index + queryPortion.lhs.index];
-      priceBarRhs = priceBars[index + Math.abs(queryPortion.rhs.index)];
-
-      lhsProperty = queryPortion.lhs.source + 'Price';
-      rhsProperty = queryPortion.rhs.source + 'Price';
-      switch (queryPortion.equalityIndicator) {
-        case '<':
-          if (priceBarLhs[lhsProperty] < priceBarRhs[rhsProperty]) {
-            this.trueCount += 1;
-          }
-          break;
-        case '<=':
-          if (priceBarLhs[lhsProperty] <= priceBarRhs[rhsProperty]) {
-            this.trueCount += 1;
-          }
-          break;
-        case '>':
-          if (priceBarLhs[lhsProperty] > priceBarRhs[rhsProperty]) {
-            this.trueCount += 1;
-          }
-          break;
-        case '>=':
-          if (priceBarLhs[lhsProperty] >= priceBarRhs[rhsProperty]) {
-            this.trueCount += 1;
-          }
-          break;
-      }
-
-      this.tradeCount += 1;
-
-    }
-
-    if (this.tradeCount > 0) {
-      this.falseCount = this.tradeCount - this.trueCount;
-      if (this.trueCount > 0) {
-        this.trueCount = (this.trueCount / this.tradeCount) * 100;
-      }
-      if (this.falseCount > 0) {
-        this.falseCount = (this.falseCount / this.tradeCount) * 100;
-      }
-    }
-
-    this.debugging =
-      'lhs.source: ' + queryPortion.lhs.source +
-      ', lhs.index: ' + queryPortion.lhs.index +
-      ', lhs.result: ' + queryPortion.lhs.result.success +
-      ', rhs.result: ' + queryPortion.rhs.result.success +
-      ', rhs.source: ' + queryPortion.rhs.source +
-      ', rhs.index: ' + queryPortion.rhs.index;
+    this.queryProcessor.process(queryPortions, this.data.priceBars);
 
     return true;
   }
 
   private parseLHS(): void {
 
+  }
+
+}
+
+export class QueryProcessor {
+
+  private falseCount = 0;
+  tradeCount = 0;
+  private trueCount = 0;
+  failedToParseMessage = '';
+  failedToParseQuery = false;
+  priceBars: PriceBar[] = [];
+  queryPortions: QueryPortion[] = [];
+
+  constructor() { }
+
+  private setDefaults(): void {
+    this.trueCount = 0;
+    this.falseCount = 0;
+    this.tradeCount = 0;
+    this.failedToParseMessage = '';
+    this.failedToParseQuery = false;
+    this.priceBars = [];
+    this.queryPortions = [];
+  }
+
+  private isEqualityCriteriaMet(index: number, queryPortion: QueryPortion): boolean {
+
+    const priceBarLhs = this.priceBars[index + Math.abs(queryPortion.lhs.index)];
+    const priceBarRhs = this.priceBars[index + Math.abs(queryPortion.rhs.index)];
+    const lhsProperty = queryPortion.lhs.source + 'Price';
+    const rhsProperty = queryPortion.rhs.source + 'Price';
+
+    switch (queryPortion.equalityIndicator) {
+      case '<':
+        return priceBarLhs[lhsProperty] < priceBarRhs[rhsProperty];
+      case '<=':
+        return priceBarLhs[lhsProperty] <= priceBarRhs[rhsProperty];
+      case '>':
+        return priceBarLhs[lhsProperty] > priceBarRhs[rhsProperty];
+      case '>=':
+        return priceBarLhs[lhsProperty] >= priceBarRhs[rhsProperty];
+    }
+
+    throw new Error(`case not handled: ${queryPortion.equalityIndicator}`);
+
+  }
+
+  process(queryPortions: QueryPortion[], priceBars: PriceBar[]): void {
+    this.setDefaults();
+    this.priceBars = priceBars;
+    this.queryPortions = queryPortions;
+
+    if (!queryPortions || queryPortions.length === 0) {
+      throw new Error('at least 1 query portion is required');
+    }
+
+    if (!priceBars || priceBars.length < 2) {
+      throw new Error('at least 2 price bars are required');
+    }
+
+    const rhsMinIndex = this.queryPortions.reduce((min, qp) => Math.min(min, qp.rhs.index), this.queryPortions[0].rhs.index);
+
+    let index: number;
+    if (this.queryPortions.length === 1) {
+
+      // if we have a single query e.g. close > open then trade count will be nearly all bars
+      for (index = 0; index < priceBars.length + (rhsMinIndex < 0 ? rhsMinIndex : 0); index++) {
+        if (this.queryPortions.every(portion => this.isEqualityCriteriaMet(index, portion))) {
+          this.trueCount += 1;
+        }
+        this.tradeCount += 1;
+      }
+
+    } else {
+
+      // if we have multiple query portions then the each successfully match
+      // will create smaller and smaller subsets of successful tests
+      // as such we need to create a new subset of bars for each query portion based on succesful matches
+      let barsSubset: PriceBar[] = [];
+      for (index = 0; index < priceBars.length + (rhsMinIndex < 0 ? rhsMinIndex : 0); index++) {
+        if (this.queryPortions.every(portion => this.isEqualityCriteriaMet(index, portion))) {
+          this.trueCount += 1;
+        }
+        this.tradeCount += 1;
+      }
+
+    }
+
+
+    if (this.tradeCount) {
+      this.falseCount = this.tradeCount - this.trueCount;
+    }
+
+  }
+
+  truePercentage(): number {
+    if (this.tradeCount && this.trueCount) {
+      return (this.trueCount / this.tradeCount) * 100;
+    }
+    return 0;
+  }
+
+  falsePercentage(): number {
+    if (this.tradeCount && this.falseCount) {
+      return (this.falseCount / this.tradeCount) * 100;
+    }
+    return 0;
   }
 
 }

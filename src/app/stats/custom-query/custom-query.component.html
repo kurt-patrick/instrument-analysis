@@ -15,13 +15,13 @@
 <div class="border-bottom">
   <div class="row">
     <div class="col-3 text-left">
-      <label>Trades: {{tradeCount | number: '1.'}}</label>
+      <label>Trades: {{queryProcessor.tradeCount | number: '1.'}}</label>
     </div>
     <div class="col-3 text-left">
-      <label>True: {{trueCount | number: '0.2-2'}}%</label>
+      <label>True: {{queryProcessor.truePercentage() | number: '0.2-2'}}%</label>
     </div>
     <div class="col-3 text-left">
-      <label>False: {{falseCount | number: '0.2-2'}}%</label>
+      <label>False: {{queryProcessor.falsePercentage() | number: '0.2-2'}}%</label>
     </div>
     <div class="col-3 text-left">
       <label>Pie chart</label>
