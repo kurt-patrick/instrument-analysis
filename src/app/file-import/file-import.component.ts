@@ -58,6 +58,7 @@ export class FileImportComponent implements OnInit {
       let arrIndex = 0;
       this.priceBars = [];
       let priceBar: PriceBar;
+      let priceBarIndex = 0;
 
       console.log('arr.length: ' + arr.length);
 
@@ -65,7 +66,9 @@ export class FileImportComponent implements OnInit {
       for (arrIndex = 1; arrIndex < arr.length; arrIndex++) {
         priceBar = new PriceBar();
         if (priceBar.populateFromCsvRow(arr[arrIndex])) {
+          priceBar.index = priceBarIndex;
           this.priceBars.push(priceBar);
+          priceBarIndex += 1;
         }
       }
 

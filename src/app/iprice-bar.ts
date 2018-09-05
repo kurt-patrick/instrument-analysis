@@ -6,4 +6,5 @@ export interface IPriceBar {
   lowPrice: number;
   closePrice: number;
   volume: number;
+  index: number;
 }

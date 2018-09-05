@@ -10,7 +10,7 @@ export class PriceBar implements IPriceBar {
   closePrice: number;
   volume: number;
   dailyRange: number;
-
+  index: number;
 
   constructor() {}
 

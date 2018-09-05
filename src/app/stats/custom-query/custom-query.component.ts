@@ -86,22 +86,53 @@ export class QueryProcessor {
   priceBars: PriceBar[] = [];
   queryPortions: QueryPortion[] = [];
 
-  constructor() { }
-
-  private setDefaults(): void {
-    this.trueCount = 0;
-    this.falseCount = 0;
-    this.tradeCount = 0;
-    this.failedToParseMessage = '';
-    this.failedToParseQuery = false;
-    this.priceBars = [];
-    this.queryPortions = [];
+  private static processQueryPortion(queryPortion: QueryPortion, subset: PriceBar[], all: PriceBar[]): QueryPortionProcessingResult {
+    let criteriaMet: boolean;
+    const indexStart = 0 + Math.abs(queryPortion.lhs.index);
+    const indexFinish = subset.length + (queryPortion.rhs.index < 0 ? queryPortion.rhs.index : 0);
+    const  result = new QueryPortionProcessingResult();
+    for (let index = indexStart; index < indexFinish; index++) {
+      criteriaMet = QueryProcessor.isEqualityCriteriaMet(index, queryPortion, subset, all);
+      if (criteriaMet === true) {
+        result.priceBars.push(subset[index]);
+      }
+      result.incrementCount(criteriaMet);
+    }
+    return result;
   }
 
-  private isEqualityCriteriaMet(index: number, queryPortion: QueryPortion): boolean {
+  private static processQueryPortions(queryPortions: QueryPortion[], priceBars: PriceBar[]): QueryPortionProcessingResult {
 
-    const priceBarLhs = this.priceBars[index + Math.abs(queryPortion.lhs.index)];
-    const priceBarRhs = this.priceBars[index + Math.abs(queryPortion.rhs.index)];
+    if (!queryPortions || queryPortions.length < 1) {
+      throw new Error('at least 1 query portion is required');
+    }
+
+    let processingResult = QueryProcessor.processQueryPortion(queryPortions[0], priceBars, priceBars);
+    if (queryPortions.length >= 2) {
+
+      for (let index = 1; index < queryPortions.length; index++) {
+        const subset = processingResult.priceBars;
+        processingResult = QueryProcessor.processQueryPortion(queryPortions[index], subset, priceBars);
+        if (!processingResult.priceBars || processingResult.priceBars.length < 2) {
+          break;
+        }
+      }
+
+    }
+
+    return processingResult;
+  }
+
+  private static isEqualityCriteriaMet(index: number, queryPortion: QueryPortion, subset: PriceBar[], all: PriceBar[]): boolean {
+
+    // the lhs bar should come from [subset] which we are iterating over
+    const priceBarLhs = subset[index + Math.abs(queryPortion.lhs.index)];
+
+    // the rhs bar should come from [all] based on the index of lhs +/- queryPortion.rhs.index
+    // this is because the bars held in [subset] are just that, a subset of [all],
+    // as the equality checks are performed, any that dont meet the criteria are removed
+    // and therefore the bar at subset[2] may now actually be the bar from all[5] ...
+    const priceBarRhs = all[priceBarLhs.index + Math.abs(queryPortion.rhs.index)];
     const lhsProperty = queryPortion.lhs.source + 'Price';
     const rhsProperty = queryPortion.rhs.source + 'Price';
 
@@ -120,6 +151,18 @@ export class QueryProcessor {
 
   }
 
+  constructor() { }
+
+  private setDefaults(): void {
+    this.trueCount = 0;
+    this.falseCount = 0;
+    this.tradeCount = 0;
+    this.failedToParseMessage = '';
+    this.failedToParseQuery = false;
+    this.priceBars = [];
+    this.queryPortions = [];
+  }
+
   process(queryPortions: QueryPortion[], priceBars: PriceBar[]): void {
     this.setDefaults();
     this.priceBars = priceBars;
@@ -133,37 +176,23 @@ export class QueryProcessor {
       throw new Error('at least 2 price bars are required');
     }
 
-    const rhsMinIndex = this.queryPortions.reduce((min, qp) => Math.min(min, qp.rhs.index), this.queryPortions[0].rhs.index);
+    const processingResult = QueryProcessor.processQueryPortions(this.queryPortions, priceBars);
+    this.setCountsFromProcessingResult(processingResult);
 
-    let index: number;
-    if (this.queryPortions.length === 1) {
+  }
 
-      // if we have a single query e.g. close > open then trade count will be nearly all bars
-      for (index = 0; index < priceBars.length + (rhsMinIndex < 0 ? rhsMinIndex : 0); index++) {
-        if (this.queryPortions.every(portion => this.isEqualityCriteriaMet(index, portion))) {
-          this.trueCount += 1;
-        }
-        this.tradeCount += 1;
-      }
+  private setCountsFromProcessingResult(result: QueryPortionProcessingResult) {
 
-    } else {
-
-      // if we have multiple query portions then the each successfully match
-      // will create smaller and smaller subsets of successful tests
-      // as such we need to create a new subset of bars for each query portion based on succesful matches
-      let barsSubset: PriceBar[] = [];
-      for (index = 0; index < priceBars.length + (rhsMinIndex < 0 ? rhsMinIndex : 0); index++) {
-        if (this.queryPortions.every(portion => this.isEqualityCriteriaMet(index, portion))) {
-          this.trueCount += 1;
-        }
-        this.tradeCount += 1;
-      }
-
+    if (!result) {
+      throw new Error('QueryPortionProcessingResult cannot be null');
     }
 
+    this.trueCount = result.trueCount;
+    this.falseCount = result.falseCount;
+    this.tradeCount = result.tradeCount;
 
-    if (this.tradeCount) {
-      this.falseCount = this.tradeCount - this.trueCount;
+    if (this.trueCount + this.falseCount !== this.tradeCount) {
+      throw new Error(`${this.trueCount} + ${this.falseCount} should equal ${this.tradeCount}`);
     }
 
   }
@@ -180,6 +209,25 @@ export class QueryProcessor {
       return (this.falseCount / this.tradeCount) * 100;
     }
     return 0;
+  }
+
+}
+
+export class QueryPortionProcessingResult {
+
+  falseCount = 0;
+  tradeCount = 0;
+  trueCount = 0;
+  priceBars: PriceBar[] = [];
+  constructor() { }
+
+  incrementCount(criteriaMet: boolean) {
+    if (criteriaMet === true) {
+      this.trueCount += 1;
+    } else {
+      this.falseCount += 1;
+    }
+    this.tradeCount += 1;
   }
 
 }
@@ -230,7 +278,11 @@ export class QueryPortion {
   }
 
   static getEqualityIndicator(query: string): string {
-    const equalityIndicators: string[] = [ '<', '<=', '>=', '>' ];
+
+    // NOTE: the order of the array is important!
+    // '<=' and '>=' must be first otherwise
+    // '<' will be found for '<=' and same for '>' giving a false match
+    const equalityIndicators: string[] = [ '<=', '>=', '<', '>' ];
 
     let index: number;
     let equalityIndicator: string;
