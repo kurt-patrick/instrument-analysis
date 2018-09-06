@@ -7,6 +7,9 @@ so we can do high[0] >= high[-1] OR low[0] <= low[-1]
 // todo: stats to have automatically displayed
 All tested against CBA
 
+high[0] >= high[-1] or low[0] <= low[-1]
+True: 90.82%
+
 low[0] > low[-1] and close[0] > open[0]
 True: 63.05%
 

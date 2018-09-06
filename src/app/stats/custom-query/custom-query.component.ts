@@ -3,6 +3,7 @@ import { DataService } from './../../shared/data.service';
 import { Component, OnInit, Input, Query } from '@angular/core';
 import { isNumber } from 'util';
 import { setDefaultService } from 'selenium-webdriver/edge';
+import { and } from '@angular/router/src/utils/collection';
 
 @Component({
   selector: 'app-custom-query',
@@ -23,8 +24,7 @@ export class CustomQueryComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.calculate();
-    this.query = 'low[0] <= low[-1]';
+    // this.calculate();
   }
 
   onKeyPress(value: string) {
@@ -60,12 +60,25 @@ export class CustomQueryComponent implements OnInit {
       return false;
     }
 
-    const portions = this.query.split('and');
+    const andStatement = ' and ';
+    const orStatement = ' or ';
+    const hasAnd = this.query.indexOf(andStatement) >= 0;
+    const hasOr = this.query.indexOf(orStatement) >= 0;
+    if (hasAnd && hasOr) {
+      this.failedToParseMessage = 'queries that contain [or] statements currently do not support [and] statements also';
+      return false;
+    }
+
+    const portions = this.query.split( hasOr ? orStatement : andStatement );
     const queryPortions: QueryPortion[] = [];
 
     portions.forEach(portion => queryPortions.push(QueryPortion.parse(portion.trim())));
 
-    this.queryProcessor.process(queryPortions, this.data.priceBars);
+    if (hasOr) {
+      this.queryProcessor.processOr(queryPortions, this.data.priceBars);
+    } else {
+      this.queryProcessor.process(queryPortions, this.data.priceBars);
+    }
 
     return true;
   }
@@ -98,6 +111,35 @@ export class QueryProcessor {
       }
       result.incrementCount(criteriaMet);
     }
+    return result;
+  }
+
+  private static processOrQueryPortions(queryPortions: QueryPortion[], priceBars: PriceBar[]): QueryPortionProcessingResult {
+
+    if (!queryPortions || queryPortions.length !== 2) {
+      throw new Error('at least 2 query portions is required to perform an [or] query');
+    }
+
+    let criteriaMet: boolean;
+    const lhsPortion = queryPortions[0];
+    const rhsPortion = queryPortions[1];
+    const indexStart = Math.max( 0 + Math.abs(lhsPortion.lhs.index), 0 + Math.abs(rhsPortion.lhs.index) );
+    const indexFinish = Math.min(
+      priceBars.length + (lhsPortion.rhs.index < 0 ? lhsPortion.rhs.index : 0),
+      priceBars.length + (rhsPortion.rhs.index < 0 ? rhsPortion.rhs.index : 0)
+    );
+    const result = new QueryPortionProcessingResult();
+
+    for (let index = indexStart; index < indexFinish; index++) {
+      criteriaMet =
+        QueryProcessor.isEqualityCriteriaMet(index, lhsPortion, priceBars, priceBars) ||
+        QueryProcessor.isEqualityCriteriaMet(index, rhsPortion, priceBars, priceBars);
+      if (criteriaMet === true) {
+        result.priceBars.push(priceBars[index]);
+      }
+      result.incrementCount(criteriaMet);
+    }
+
     return result;
   }
 
@@ -164,6 +206,18 @@ export class QueryProcessor {
   }
 
   process(queryPortions: QueryPortion[], priceBars: PriceBar[]): void {
+    this.validateProcessParams(queryPortions, priceBars);
+    const processingResult = QueryProcessor.processQueryPortions(this.queryPortions, priceBars);
+    this.setCountsFromProcessingResult(processingResult);
+  }
+
+  processOr(queryPortions: QueryPortion[], priceBars: PriceBar[]): void {
+    this.validateProcessParams(queryPortions, priceBars);
+    const processingResult = QueryProcessor.processOrQueryPortions(this.queryPortions, priceBars);
+    this.setCountsFromProcessingResult(processingResult);
+  }
+
+  private validateProcessParams(queryPortions: QueryPortion[], priceBars: PriceBar[]): void {
     this.setDefaults();
     this.priceBars = priceBars;
     this.queryPortions = queryPortions;
@@ -175,10 +229,6 @@ export class QueryProcessor {
     if (!priceBars || priceBars.length < 2) {
       throw new Error('at least 2 price bars are required');
     }
-
-    const processingResult = QueryProcessor.processQueryPortions(this.queryPortions, priceBars);
-    this.setCountsFromProcessingResult(processingResult);
-
   }
 
   private setCountsFromProcessingResult(result: QueryPortionProcessingResult) {
