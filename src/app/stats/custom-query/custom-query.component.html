@@ -1,6 +1,6 @@
-<div class="border-none">
+<div *ngIf='queryTitle' class="border-none">
   <div class="col-12">
-    <p class="font-weight-bold">Todays low is less than or equal to yesterdays low</p>
+    <p class="font-weight-bold">{{queryTitle}}</p>
   </div>
 </div>
 <div class="input-group mb-3">
@@ -9,10 +9,10 @@
   </div>
   <input id="query" value="{{query}}" #textbox required class="form-control" aria-label="Custom query to calculate statistics" (keyup)="onKeyPress($event.target.value)">
   <div class="input-group-append">
-    <button id="calculate" (click)="calculate()" class="input-group-button" [disabled]="query.trim().length <= 12">Calculate</button>
+    <button id="calculate" (click)="calculate()" class="input-group-button">Calculate</button>
   </div>
 </div>
-<div class="border-bottom">
+<div class="border-none">
   <div class="row">
     <div class="col-3 text-left">
       <label>Trades: {{queryProcessor.tradeCount | number: '1.'}}</label>
@@ -28,6 +28,6 @@
     </div>
   </div>
 </div>
-<p>debugging: {{debugging}}</p>
-<p>failedToParseMessage: {{failedToParseMessage}}</p>
-<p>query: {{query}}</p>
+<div *ngIf="failedToParseMessage" class="alert alert-warning">
+  <p>{{failedToParseMessage}}</p>
+</div>

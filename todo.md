@@ -47,4 +47,5 @@ True: 51.49%
 low[0] <= low[-1]
 True: 47.96%
 
-
+close[0] < high[-1]
+True: 69.31%

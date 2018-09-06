@@ -3,7 +3,7 @@ import { DataService } from './../../shared/data.service';
 import { Component, OnInit, Input, Query } from '@angular/core';
 import { isNumber } from 'util';
 import { setDefaultService } from 'selenium-webdriver/edge';
-import { and } from '@angular/router/src/utils/collection';
+import { and, forEach } from '@angular/router/src/utils/collection';
 
 @Component({
   selector: 'app-custom-query',
@@ -12,9 +12,10 @@ import { and } from '@angular/router/src/utils/collection';
 })
 export class CustomQueryComponent implements OnInit {
 
-  debugging: string;
   @Input()
   query: string;
+  @Input()
+  queryTitle: string;
   failedToParseQuery: boolean;
   failedToParseMessage: string;
   queryProcessor: QueryProcessor;
@@ -25,6 +26,7 @@ export class CustomQueryComponent implements OnInit {
 
   ngOnInit() {
     // this.calculate();
+    this.queryTitle = 'Query Title';
   }
 
   onKeyPress(value: string) {
@@ -35,9 +37,6 @@ export class CustomQueryComponent implements OnInit {
 
   calculate(): void {
     this.failedToParseQuery = this.parseQuery();
-    if (this.failedToParseQuery === true) {
-      this.debugging += 'failedToParseQuery: ' + this.failedToParseQuery;
-    }
   }
 
   private parseQuery(): boolean {
@@ -51,7 +50,7 @@ export class CustomQueryComponent implements OnInit {
     }
 
     if (!this.query || this.query.trim().length <= 12) {
-      this.failedToParseMessage = 'query must be greater than 12 characters';
+      this.failedToParseMessage = 'query must be greater than 12 characters e.g. close[0] > open[0]';
       return false;
     }
 
@@ -72,7 +71,16 @@ export class CustomQueryComponent implements OnInit {
     const portions = this.query.split( hasOr ? orStatement : andStatement );
     const queryPortions: QueryPortion[] = [];
 
-    portions.forEach(portion => queryPortions.push(QueryPortion.parse(portion.trim())));
+    for (let index = 0; index < portions.length; index++) {
+      const portion = portions[index];
+      const queryPortion = QueryPortion.parse(portion);
+      if (!queryPortion.result.success) {
+        this.failedToParseMessage = '';
+        queryPortion.result.messages.forEach(msg => this.failedToParseMessage += msg);
+        return false;
+      }
+      queryPortions.push(queryPortion);
+    }
 
     if (hasOr) {
       this.queryProcessor.processOr(queryPortions, this.data.priceBars);
@@ -299,13 +307,13 @@ export class QueryPortion {
   result: QueryResult;
 
   constructor(portion: string) {
-    this.queryPortion = portion;
 
-    if (!this.queryPortion || this.queryPortion.trim().length <= 12) {
+    if (!portion || portion.trim().length <= 12) {
       this.result = QueryResult.failure('query must be greater than 12 characters');
       return;
     }
 
+    this.queryPortion = portion.trim();
     this.equalityIndicator = QueryPortion.getEqualityIndicator(portion);
     if (!this.equalityIndicator || this.equalityIndicator.trim().length === 0) {
       this.result = QueryResult.failure('equality indicator not found: <, <=, >=, >');
@@ -388,10 +396,14 @@ export class PriceColumnAndIndex {
     const priceSource = value.substring(0, openBracketIndex);
     const validPriceSources: string[] = [ 'low', 'high', 'open', 'close' ];
     if (!priceSource || -1 === validPriceSources.indexOf(priceSource)) {
-      return retVal.setResult(QueryResult.failure('lhs price. expected: low, high, open, close. actual: ' + priceSource));
+      return retVal.setResult(QueryResult.failure('unknown price source: must be of type low, high, open, close. actual: ' + priceSource));
     }
 
     const priceIndexStr = value.substring(openBracketIndex + 1, closeBracketIndex);
+    if (!priceIndexStr || priceIndexStr === '') {
+      return retVal.setResult(QueryResult.failure(`no index has been set: expected something like ${priceSource}[0]`));
+    }
+
     const priceIndex: number = Number(priceIndexStr) || 0;
 
     retVal.index = priceIndex;
