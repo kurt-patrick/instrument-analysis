@@ -1,0 +1,58 @@
+<div class="row">
+  <div class="col-4">
+    <app-custom-query query="high[0] >= high[-1] or low[0] <= low[-1]" title="Todays price will touch yesterdays high or low"></app-custom-query>
+  </div>
+  <div class="col-4">
+    <app-custom-query query="low[0] > low[-1] and close[0] > open[0]" title="If todays low > yesterdays low what is the odds of closing higher then open"></app-custom-query>
+  </div>
+  <div class="col-4">
+    <app-custom-query query="open[0] > close[-1] and close[0] > close[-1]" title="If open > yesterdays close what is the odds of closing higher then yesterdays close"></app-custom-query>
+  </div>
+</div>
+<div class="row">
+  <div class="col-4">
+    <app-custom-query query="open[0] < close[-1] and close[0] > close[-1]" title="If open < close (yest) what are odds of closing higher than close (yest)"></app-custom-query>
+  </div>
+  <div class="col-4">
+    <app-custom-query query="open[0] > close[-1] and high[0] > high[-1]" title="If open > close (yest) what are the odds of closing higher than high (yest)"></app-custom-query>
+  </div>
+  <div class="col-4">
+    <app-custom-query query="low[0] < low[-1] and close[0] < close[-1]" title="if todays low is < low (yest) what are the odds of closing lower than yest"></app-custom-query>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-4">
+    <app-custom-query query="open[0] < close[-1] and low[0] <= low[-1]" title="if open is < close (yest) what are the odds of todays low be less than low (yest)"></app-custom-query>
+  </div>
+  <div class="col-4">
+    <app-custom-query query="open[0] < close[-1] and high[0] >= high[-1]" title="if open is < close (yest) what are the odds of setting a higher high today"></app-custom-query>
+  </div>
+  <div class="col-4">
+    <app-custom-query query="open[0] > high[-1] and close[0] > open[0]" title="if open is above high (yest) what is the odds of closing higher than open (yest)"></app-custom-query>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-4">
+    <app-custom-query query="open[0] > high[-1] and close[0] > open[0]" title="if open is above high (yest) what is the odds of closing higher than open"></app-custom-query>
+  </div>
+  <div class="col-4">
+    <app-custom-query query="open[0] < low[-1] and close[0] < open[0]" title="if open is less than low (yest) what are the odds of closing lower than open"></app-custom-query>
+  </div>
+  <div class="col-4">
+    <app-custom-query query="high[0] >= high[-1]" title="what are the odds of todays high being higher than or equal to yesterdays high"></app-custom-query>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-4">
+    <app-custom-query query="low[0] <= low[-1]" title="what are the odds of todays low be less than or equal to yesterdays low"></app-custom-query>
+  </div>
+  <div class="col-4">
+    <app-custom-query query="close[0] < high[-1]" title="what are the odds of todays close being less than yesterdays high"></app-custom-query>
+  </div>
+  <div class="col-4">
+    <app-custom-query query="" title=""></app-custom-query>
+  </div>
+</div>

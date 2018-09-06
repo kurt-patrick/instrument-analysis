@@ -11,12 +11,14 @@ import { DailyRangeContainerComponent } from './stats/daily-range-container/dail
 import { FileImportComponent } from './file-import/file-import.component';
 import { TopToolbarComponent } from './top-toolbar/top-toolbar.component';
 import { BarDataPaginatedComponent } from './bar-data-paginated/bar-data-paginated.component';
+import { CommonQueriesComponent } from './stats/common-queries/common-queries.component';
 
 const appRoutes: Routes = [
   { path: 'data/import', component: FileImportComponent },
   { path: 'import', component: FileImportComponent },
   { path: 'daily-range', component: DailyRangeContainerComponent },
-  { path: 'query', component: CustomQueryComponent },
+  { path: 'common-query', component: CommonQueriesComponent },
+  { path: 'custom-query', component: CustomQueryComponent },
   { path: '',
     redirectTo: '/',
     pathMatch: 'full'
@@ -32,7 +34,8 @@ const appRoutes: Routes = [
     DailyRangeComponent,
     DailyRangeContainerComponent,
     BarDataPaginatedComponent,
-    CustomQueryComponent
+    CustomQueryComponent,
+    CommonQueriesComponent
   ],
   imports: [
     RouterModule.forRoot(

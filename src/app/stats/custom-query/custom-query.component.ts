@@ -15,7 +15,7 @@ export class CustomQueryComponent implements OnInit {
   @Input()
   query: string;
   @Input()
-  queryTitle: string;
+  title: string;
   failedToParseQuery: boolean;
   failedToParseMessage: string;
   queryProcessor: QueryProcessor;
@@ -25,8 +25,9 @@ export class CustomQueryComponent implements OnInit {
   }
 
   ngOnInit() {
-    // this.calculate();
-    this.queryTitle = 'Query Title';
+    if (this.query) {
+      this.calculate();
+    }
   }
 
   onKeyPress(value: string) {

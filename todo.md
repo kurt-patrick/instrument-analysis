@@ -1,10 +1,11 @@
-// todo: introduce OR statement
-so we can do high[0] >= high[-1] OR low[0] <= low[-1]
+// todo: In Statistics, add new common query pages for:
+// -> Open greater than close yesterday
+// -> Open greater than high yesterday
+// -> Open less than close yesterday
+// -> Open less than low yesterday
+// Add an ngClass for True and False where either is >= 60%
 
-// todo: introduce div for error messages using bootstrap error class
-
-
-// todo: stats to have automatically displayed
+// (done) todo: stats to have automatically displayed
 All tested against CBA
 
 high[0] >= high[-1] or low[0] <= low[-1]
