@@ -50,8 +50,8 @@ export class CustomQueryComponent implements OnInit {
       return false;
     }
 
-    if (!this.query || this.query.trim().length <= 12) {
-      this.failedToParseMessage = 'query must be greater than 12 characters e.g. close[0] > open[0]';
+    if (!this.query || this.query.trim().length <= 6) {
+      this.failedToParseMessage = 'query must be at least 7 characters. example query is close[0] > open[0]';
       return false;
     }
 
@@ -60,8 +60,8 @@ export class CustomQueryComponent implements OnInit {
       return false;
     }
 
-    const andStatement = ' and ';
-    const orStatement = ' or ';
+    const andStatement = 'and';
+    const orStatement = 'or';
     const hasAnd = this.query.indexOf(andStatement) >= 0;
     const hasOr = this.query.indexOf(orStatement) >= 0;
     if (hasAnd && hasOr) {
@@ -90,10 +90,6 @@ export class CustomQueryComponent implements OnInit {
     }
 
     return true;
-  }
-
-  private parseLHS(): void {
-
   }
 
 }
@@ -309,8 +305,8 @@ export class QueryPortion {
 
   constructor(portion: string) {
 
-    if (!portion || portion.trim().length <= 12) {
-      this.result = QueryResult.failure('query must be greater than 12 characters');
+    if (!portion || portion.trim().length <= 6) {
+      this.result = QueryResult.failure('query must be at least 7 characters');
       return;
     }
 
@@ -321,13 +317,19 @@ export class QueryPortion {
       return;
     }
 
-    this.lhs = PriceColumnAndIndex.parse(this.queryPortion.split(' ')[0]);
+    const partsArr = this.queryPortion.split(this.equalityIndicator);
+    if (!partsArr || partsArr.length !== 2) {
+      this.result = QueryResult.failure('query must have 3 parts: [lhs] [comparer] [rhs] e.g. open[0] > close[0]');
+      return;
+    }
+
+    this.lhs = PriceColumnAndIndex.parse(partsArr[0].trim());
     if (!this.lhs.result.success) {
       this.result = this.lhs.result;
       return;
     }
 
-    this.rhs = PriceColumnAndIndex.parse(this.queryPortion.split(' ')[2]);
+    this.rhs = PriceColumnAndIndex.parse(partsArr[1].trim());
     if (!this.rhs.result.success) {
       this.result = this.rhs.result;
       return;
@@ -377,27 +379,47 @@ export class PriceColumnAndIndex {
   static parse(value: string): PriceColumnAndIndex {
     const retVal = new PriceColumnAndIndex();
 
-    if (!value || value.trim().length <= 3) {
-      return retVal.setResult(QueryResult.failure('parse: value: must be at least 4 char long. actual: ' + value));
+    if (!value || value.trim().length <= 2) {
+      return retVal.setResult(QueryResult.failure('parse: value: must be at least 3 chars long e.g. [low]. actual: ' + value));
     }
 
     value = value.trim();
 
+    let priceSource: string;
+    const validPriceSources: string[] = [ 'low', 'high', 'open', 'close' ];
+    for (let index = 0; index < validPriceSources.length; index++) {
+      if (value.startsWith(validPriceSources[index])) {
+        priceSource = validPriceSources[index];
+      }
+    }
+
+    if (!priceSource) {
+      return retVal.setResult(QueryResult.failure('unknown price source: must be of type low, high, open, close. actual: ' + priceSource));
+    }
+
+    // if the user has entered just open etc ... instead of open[0] thats fine. default to index 0 and return;
+    retVal.index = 0;
+    if (value.length === priceSource.length) {
+      retVal.source = priceSource;
+      return retVal;
+    }
+
+    // convert open[0] into [0]
+    value = value.replace(priceSource, '').trim();
+
     // start from the left and work to the right
     const openBracketIndex = value.indexOf('[');
-    if (openBracketIndex < 0) {
+    if (openBracketIndex === -1) {
       return retVal.setResult(QueryResult.failure('opening bracket not found "["'));
     }
 
-    const closeBracketIndex = value.indexOf(']');
-    if (openBracketIndex < 0) {
-      return retVal.setResult(QueryResult.failure('closing bracket not found "]"'));
+    if (openBracketIndex !== 0) {
+      return retVal.setResult(QueryResult.failure('opening bracket "[" is in incorrect location'));
     }
 
-    const priceSource = value.substring(0, openBracketIndex);
-    const validPriceSources: string[] = [ 'low', 'high', 'open', 'close' ];
-    if (!priceSource || -1 === validPriceSources.indexOf(priceSource)) {
-      return retVal.setResult(QueryResult.failure('unknown price source: must be of type low, high, open, close. actual: ' + priceSource));
+    const closeBracketIndex = value.indexOf(']');
+    if (closeBracketIndex === -1) {
+      return retVal.setResult(QueryResult.failure('closing bracket not found "]"'));
     }
 
     const priceIndexStr = value.substring(openBracketIndex + 1, closeBracketIndex);
