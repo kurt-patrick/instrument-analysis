@@ -8,7 +8,10 @@
 // (done) todo: stats to have automatically displayed
 All tested against CBA
 
-high[0] >= high[-1] or low[0] <= low[-1]
+high[0] > high[-1] or low[0] < low[-1]
+True: 89.32%
+
+high[0] < high[-1] or low[0] > low[-1]
 True: 90.82%
 
 low[0] > low[-1] and close[0] > open[0]

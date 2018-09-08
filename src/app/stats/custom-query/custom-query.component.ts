@@ -394,7 +394,7 @@ export class PriceColumnAndIndex {
     }
 
     if (!priceSource) {
-      return retVal.setResult(QueryResult.failure('unknown price source: must be of type low, high, open, close. actual: ' + priceSource));
+      return retVal.setResult(QueryResult.failure('unknown price source: must be of type low, high, open, close. actual'));
     }
 
     // if the user has entered just open etc ... instead of open[0] thats fine. default to index 0 and return;
