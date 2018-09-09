@@ -5,6 +5,23 @@
 // -> Open less than low yesterday
 // Add an ngClass for True and False where either is >= 60%
 
+// Sell off page that shows the statistics for days closing lower than open
+// Sell off page that shows the statistics for days closing higher than open
+
+1	622	53.39%	53.39%
+2	268	23.00%	76.39%
+3	146	12.53%	88.93%
+4	66	5.67%	94.59%
+5	37	3.18%	97.77%
+6	20	1.72%	99.48%
+7	2	0.17%	99.66%
+8	2	0.17%	99.83%
+9	0	0.00%	99.83%
+10	1	0.09%	99.91%
+11	0	0.00%	99.91%
+12	1	0.09%	100.00%
+
+
 // (done) todo: stats to have automatically displayed
 All tested against CBA
 
