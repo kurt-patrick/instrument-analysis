@@ -3,6 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, Component } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LoadingModule } from 'ngx-loading';
+import { ChartsModule } from 'ng2-charts';
 
 import { AppComponent } from './app.component';
 import { CustomQueryComponent } from './stats/custom-query/custom-query.component';
@@ -55,7 +56,8 @@ const appRoutes: Routes = [
       { enableTracing: true }
     ),
     BrowserModule,
-    LoadingModule
+    LoadingModule,
+    ChartsModule
   ],
   providers: [ DataService ],
   bootstrap: [

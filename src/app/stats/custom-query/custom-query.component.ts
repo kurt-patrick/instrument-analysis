@@ -12,22 +12,46 @@ import { and, forEach } from '@angular/router/src/utils/collection';
 })
 export class CustomQueryComponent implements OnInit {
 
+  chartOptions = {
+    cutoutPercentage: 10,
+    rotation: Math.PI * 1.5,
+    responsive: true,
+    animation: {
+      animateScale: false
+    }
+  };
+
+  chartLabels = ['False', 'True'];
+
   @Input()
   query: string;
   @Input()
   title: string;
   failedToParseQuery: boolean;
   failedToParseMessage: string;
-  queryProcessor: QueryProcessor;
+  private _queryProcessor: QueryProcessor;
+  get queryProcessor(): QueryProcessor {
+    if (!this._queryProcessor) {
+      this._queryProcessor = new QueryProcessor();
+    }
+    return this._queryProcessor;
+  }
 
   constructor(private data: DataService) {
-    this.queryProcessor = new QueryProcessor();
   }
 
   ngOnInit() {
     if (this.query) {
       this.calculate();
     }
+  }
+
+  chartData() {
+    return [ {
+      label: this.chartLabels,
+      labels: this.chartLabels,
+      data: [this.queryProcessor.falsePercentage(), this.queryProcessor.truePercentage()]
+    }];
   }
 
   onKeyPress(value: string) {

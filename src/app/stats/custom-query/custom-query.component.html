@@ -24,7 +24,14 @@
       <label [ngClass]="{'progress-bar bg-success': queryProcessor.falsePercentage() >= 65}">False: {{queryProcessor.falsePercentage() | number: '0.2-2'}}%</label>
     </div>
     <div class="col-3 text-left">
-      <label>Pie chart</label>
+      <canvas
+        baseChart
+        [chartType]="'doughnut'"
+        [datasets]="chartData()"
+        [labels]="chartLabels"
+        [options]="chartOptions"
+        [legend]="false">
+      </canvas>
     </div>
   </div>
 </div>
