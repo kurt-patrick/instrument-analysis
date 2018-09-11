@@ -3,7 +3,6 @@
 // -> Open greater than high yesterday
 // -> Open less than close yesterday
 // -> Open less than low yesterday
-// Add an ngClass for True and False where either is >= 60%
 
 // Sell off page that shows the statistics for days closing lower than open
 // Sell off page that shows the statistics for days closing higher than open

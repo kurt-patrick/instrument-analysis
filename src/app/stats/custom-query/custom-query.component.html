@@ -18,10 +18,10 @@
       <label>Trades: {{queryProcessor.tradeCount | number: '1.'}}</label>
     </div>
     <div class="col-3 text-left">
-      <label>True: {{queryProcessor.truePercentage() | number: '0.2-2'}}%</label>
+      <label [ngClass]="{'progress-bar bg-success': queryProcessor.truePercentage() >= 65}">True: {{queryProcessor.truePercentage() | number: '0.2-2'}}%</label>
     </div>
     <div class="col-3 text-left">
-      <label>False: {{queryProcessor.falsePercentage() | number: '0.2-2'}}%</label>
+      <label [ngClass]="{'progress-bar bg-success': queryProcessor.falsePercentage() >= 65}">False: {{queryProcessor.falsePercentage() | number: '0.2-2'}}%</label>
     </div>
     <div class="col-3 text-left">
       <label>Pie chart</label>
