@@ -12,6 +12,10 @@ import { FileImportComponent } from './file-import/file-import.component';
 import { TopToolbarComponent } from './top-toolbar/top-toolbar.component';
 import { BarDataPaginatedComponent } from './bar-data-paginated/bar-data-paginated.component';
 import { CommonQueriesComponent } from './stats/common-queries/common-queries.component';
+import { OpenAboveYestCloseComponent } from './stats/OpenAbove/open-above-yest-close/open-above-yest-close.component';
+import { OpenAboveYestHighComponent } from './stats/OpenAbove/open-above-yest-high/open-above-yest-high.component';
+import { OpenBelowYestLowComponent } from './stats/OpenBelow/open-below-yest-low/open-below-yest-low.component';
+import { OpenBelowYestCloseComponent } from './stats/OpenBelow/open-below-yest-close/open-below-yest-close.component';
 
 const appRoutes: Routes = [
   { path: 'data/import', component: FileImportComponent },
@@ -19,6 +23,10 @@ const appRoutes: Routes = [
   { path: 'daily-range', component: DailyRangeContainerComponent },
   { path: 'common-query', component: CommonQueriesComponent },
   { path: 'custom-query', component: CustomQueryComponent },
+  { path: 'openAboveYestClose', component: OpenAboveYestCloseComponent },
+  { path: 'openAboveYestHigh', component: OpenAboveYestHighComponent  },
+  { path: 'openBelowYestClose', component: OpenBelowYestCloseComponent  },
+  { path: 'openBelowYestLow', component: OpenBelowYestLowComponent },
   { path: '',
     redirectTo: '/',
     pathMatch: 'full'
@@ -35,7 +43,11 @@ const appRoutes: Routes = [
     DailyRangeContainerComponent,
     BarDataPaginatedComponent,
     CustomQueryComponent,
-    CommonQueriesComponent
+    CommonQueriesComponent,
+    OpenAboveYestCloseComponent,
+    OpenAboveYestHighComponent,
+    OpenBelowYestLowComponent,
+    OpenBelowYestCloseComponent
   ],
   imports: [
     RouterModule.forRoot(

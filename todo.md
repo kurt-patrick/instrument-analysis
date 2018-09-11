@@ -1,3 +1,9 @@
+// todo: refactor stats calculations for AND statements: you should get the same answer regardless of ordering
+// CBA data
+// e.g. Trades: 097, True: 78.35% open>high[-1] and low>high[-1] and close>open
+// e.g. Trades: 157, True: 48.41% open>high[-1] and close>open and low>high[-1] 
+// BOTH SHOULD BE THE SAME
+
 // todo: In Statistics, add new common query pages for:
 // -> Open greater than close yesterday
 // -> Open greater than high yesterday

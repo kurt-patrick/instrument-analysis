@@ -1,0 +1,30 @@
+<h2>Gap higher</h2>
+<br>
+<div class="row">
+  <div class="col-4">
+    <app-custom-query query="open>high[-1] and close>open" title="Close higher than open"></app-custom-query>
+  </div>
+  <div class="col-4">
+    <app-custom-query query="open>high[-1] and low<=high[-1]" title="Will the gap be filled"></app-custom-query>
+  </div>
+  <div class="col-4">
+    <app-custom-query query="open>high[-1] and low<=high[-1] and close>high[-1]" title="Will the gap be filled and then close higher"></app-custom-query>
+  </div>
+</div>
+<div class="row">
+  <div class="col-4">
+    <app-custom-query query="open>high[-1] and close>high[-1]" title="Close higher than yesterdays high"></app-custom-query>
+  </div>
+  <div class="col-4">
+    <app-custom-query query="open>high[-1] and low>high[-1] and close>open" title="If the gap is not filled then will price close higher than open"></app-custom-query>
+  </div>
+</div>
+<div class="row">
+  <div class="col-4">
+    <app-custom-query query="open>high[-1] and low<=close[-1] and close>=high[-1]" title="Will the price sell off to yesterdays close and then close higher"></app-custom-query>
+  </div>
+  <div class="col-4">
+    <app-custom-query query="open>high[-1] and low<=close[-1]" title="Will the price sell off to yesterdays close"></app-custom-query>
+  </div>
+</div>
+
