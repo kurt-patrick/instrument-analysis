@@ -17,6 +17,7 @@ import { OpenAboveYestCloseComponent } from './stats/OpenAbove/open-above-yest-c
 import { OpenAboveYestHighComponent } from './stats/OpenAbove/open-above-yest-high/open-above-yest-high.component';
 import { OpenBelowYestLowComponent } from './stats/OpenBelow/open-below-yest-low/open-below-yest-low.component';
 import { OpenBelowYestCloseComponent } from './stats/OpenBelow/open-below-yest-close/open-below-yest-close.component';
+import { RiskRewardComponent } from './risk-reward/risk-reward.component';
 
 const appRoutes: Routes = [
   { path: 'data/import', component: FileImportComponent },
@@ -28,6 +29,7 @@ const appRoutes: Routes = [
   { path: 'openAboveYestHigh', component: OpenAboveYestHighComponent  },
   { path: 'openBelowYestClose', component: OpenBelowYestCloseComponent  },
   { path: 'openBelowYestLow', component: OpenBelowYestLowComponent },
+  { path: 'riskReward', component: RiskRewardComponent },
   { path: '',
     redirectTo: '/',
     pathMatch: 'full'
@@ -48,7 +50,8 @@ const appRoutes: Routes = [
     OpenAboveYestCloseComponent,
     OpenAboveYestHighComponent,
     OpenBelowYestLowComponent,
-    OpenBelowYestCloseComponent
+    OpenBelowYestCloseComponent,
+    RiskRewardComponent
   ],
   imports: [
     RouterModule.forRoot(

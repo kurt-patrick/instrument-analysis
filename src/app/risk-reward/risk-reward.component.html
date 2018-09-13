@@ -1,0 +1,43 @@
+<div class="input-group">
+  <div class="input-group-prepend">
+    <span class="input-group-text">Max $ amount to risk on the trade</span>
+  </div>
+  <input type="text" value="{{maxTradeRisk}}" (keyup)="maxTradeRisk=$event.target.value" aria-label="Max $ amount to risk on the trade" class="form-control">
+</div>
+<div class="input-group">
+  <div class="input-group-prepend">
+    <span class="input-group-text">Entry price</span>
+  </div>
+  <input type="text" value="{{entryPrice}}" (keyup)="entryPrice=$event.target.value" aria-label="Entry price" class="form-control">
+</div>
+<div class="input-group">
+  <div class="input-group-prepend">
+    <span class="input-group-text">Stop price</span>
+  </div>
+  <input type="text" value="{{stopPrice}}" (keyup)="stopPrice=$event.target.value" aria-label="Stop price" class="form-control">
+</div>
+<div class="input-group">
+  <div class="input-group-prepend">
+    <span class="input-group-text">Exit price</span>
+  </div>
+  <input type="text" value="{{profitPrice}}" (keyup)="profitPrice=$event.target.value" aria-label="Exit price" class="form-control">
+</div>
+<h4>Risk/Reward: {{riskReward}}</h4>
+<div class="input-group">
+  <div class="input-group-prepend">
+    <span class="input-group-text">Brokerage $ (in)</span>
+  </div>
+  <input type="text" (keyup)="calculate()" value="{{brokerageIn}}" value="10" aria-label="Brokerage $ (in)" class="form-control">
+  <div class="input-group-prepend">
+    <span class="input-group-text">Brokerage $ (out)</span>
+  </div>
+  <input type="text" (keyup)="calculate()" value="{{brokerageOut}}" aria-label="Brokerage $ (out)" class="form-control">
+</div>
+<div class="input-group">
+  <div class="input-group-prepend">
+    <span class="input-group-text">Contract size per point</span>
+  </div>
+  <input type="text" (keyup)="calculate()" value="5" aria-label="Contract size per point" class="form-control">
+</div>
+<small>Note this field is optional and can be blank. Enter this value if you trade indexes etc and each tick is worth a predefined amount. e.g. each tick move is worth 5 AUD</small>
+<h4>Contracts to trade: {{contractsToTrade}}</h4>

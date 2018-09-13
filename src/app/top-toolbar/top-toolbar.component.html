@@ -10,42 +10,49 @@
 
     <ul class="navbar-nav mr-auto">
       <li class="nav-item dropdown">
-          <a class="nav-link active dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true"
-            aria-expanded="false">
-            Data
-          </a>
-          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" routerLink="import">Import</a>
-            <a class="dropdown-item" routerLink="data/edit">Edit</a>
-            <a class="dropdown-item" routerLink="data/list">Instrument list</a>
-          </div>
-        </li>
-
-        <li class="nav-item dropdown">
         <a class="nav-link active dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true"
           aria-expanded="false">
-          Statistics
+          Data
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" routerLink="daily-range">Daily range</a>
-          <a class="dropdown-item" routerLink="custom-query">Custom query</a>
-          <a class="dropdown-item" routerLink="openAboveYestClose">Open above close</a>
-          <a class="dropdown-item" routerLink="openAboveYestHigh">Open above high (gap up)</a>
-          <a class="dropdown-item" routerLink="openBelowYestClose">Open below close</a>
-          <a class="dropdown-item" routerLink="openBelowYestLow">Open below low (gap down)</a>
-          <a class="dropdown-item" routerLink="common-query">Common queries</a>
-        <!--
-          <a class="dropdown-item" href="#">Gap lower</a>
-          <a class="dropdown-item" href="#">Gap higher</a>
-          <a class="dropdown-item" href="#">2 consecutive higher closes</a>
-          <a class="dropdown-item" href="#">3 consecutive higher closes</a>
-          <a class="dropdown-item" href="#">n consecutive higher closes</a>
-          <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="#">Buy open sell close</a>
-          <a class="dropdown-item" href="#">Custom trade scenario</a>
-      -->
+          <a class="dropdown-item" routerLink="import">Import</a>
+          <a class="dropdown-item" routerLink="data/edit">Edit</a>
+          <a class="dropdown-item" routerLink="data/list">Instrument list</a>
         </div>
       </li>
+
+      <li class="nav-item dropdown">
+      <a class="nav-link active dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true"
+        aria-expanded="false">
+        Statistics
+      </a>
+      <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+        <a class="dropdown-item" routerLink="daily-range">Daily range</a>
+        <a class="dropdown-item" routerLink="custom-query">Custom query</a>
+        <a class="dropdown-item" routerLink="openAboveYestClose">Open above close</a>
+        <a class="dropdown-item" routerLink="openAboveYestHigh">Open above high (gap up)</a>
+        <a class="dropdown-item" routerLink="openBelowYestClose">Open below close</a>
+        <a class="dropdown-item" routerLink="openBelowYestLow">Open below low (gap down)</a>
+        <a class="dropdown-item" routerLink="common-query">Common queries</a>
+      <!--
+        <a class="dropdown-item" href="#">2 consecutive higher closes</a>
+        <a class="dropdown-item" href="#">3 consecutive higher closes</a>
+        <a class="dropdown-item" href="#">n consecutive higher closes</a>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" href="#">Buy open sell close</a>
+        <a class="dropdown-item" href="#">Custom trade scenario</a>
+    -->
+      </div>
+    </li>
+    <li class="nav-item dropdown">
+      <a class="nav-link active dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true"
+        aria-expanded="false">
+        Risk
+      </a>
+      <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+        <a class="dropdown-item" routerLink="riskReward">Risk/Reward</a>
+      </div>
+    </li>
 
     </ul>
 
